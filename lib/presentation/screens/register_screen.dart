@@ -6,19 +6,31 @@ import 'package:taskly/data/services/auth_service.dart';
 import 'package:taskly/presentation/widgets/my_button.dart';
 import 'package:taskly/presentation/widgets/my_text_field.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
   final void Function()? onTap;
+
+  const RegisterScreen({super.key, required this.onTap});
+
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-
-  RegisterScreen({super.key, required this.onTap});
+  bool _isLoading = false;
 
   void register(BuildContext context) async {
     if (_passwordController.text != _confirmPasswordController.text) {
       _showError('Passwords don\'t match', context);
       return;
     }
+    
+    setState(() {
+      _isLoading = true;
+    });
+
     final auth = AuthService();
     try {
       await auth.signUpWithEmailPassword(
@@ -35,6 +47,12 @@ class RegisterScreen extends StatelessWidget {
       }
     } catch (e) {
       _showError(e.toString(), context);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -129,7 +147,11 @@ class RegisterScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              MyButton(text: 'Register', onTap: () => register(context)),
+              MyButton(
+                text: 'Register',
+                isLoading: _isLoading,
+                onTap: () => register(context),
+              ),
               const SizedBox(height: 20),
 
               Row(
@@ -144,7 +166,7 @@ class RegisterScreen extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: onTap,
+                    onTap: widget.onTap,
                     child: Text(
                       'Login here',
                       style: TextStyle(

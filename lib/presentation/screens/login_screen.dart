@@ -5,14 +5,25 @@ import 'package:taskly/data/services/auth_service.dart';
 import 'package:taskly/presentation/widgets/my_button.dart';
 import 'package:taskly/presentation/widgets/my_text_field.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   final void Function()? onTap;
+
+  const LoginScreen({super.key, required this.onTap});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
-  LoginScreen({super.key, required this.onTap});
+  bool _isLoading = false;
 
   void login(BuildContext context) async {
+    setState(() {
+      _isLoading = true;
+    });
+
     final auth = AuthService();
     try {
       await auth.signInWithEmailPassword(
@@ -34,6 +45,12 @@ class LoginScreen extends StatelessWidget {
             ],
           ),
         );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -106,7 +123,11 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 30),
 
-              MyButton(text: 'Login', onTap: () => login(context)),
+              MyButton(
+                text: 'Login',
+                isLoading: _isLoading,
+                onTap: () => login(context),
+              ),
               const SizedBox(height: 20),
 
               Row(
@@ -121,7 +142,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: onTap,
+                    onTap: widget.onTap,
                     child: Text(
                       'Register now',
                       style: TextStyle(
