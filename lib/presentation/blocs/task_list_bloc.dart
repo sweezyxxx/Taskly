@@ -4,7 +4,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../../domain/entities/task_entity.dart';
 import '../../../domain/usecases/task_usecases.dart';
-import '../../../domain/repositories/task_repository.dart';
+
 
 // --- Events ---
 abstract class TaskListEvent extends Equatable {
@@ -13,7 +13,7 @@ abstract class TaskListEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class InitTasks extends TaskListEvent {}
+
 
 class LoadTasks extends TaskListEvent {}
 
@@ -92,8 +92,6 @@ class TaskListBloc extends Bloc<TaskListEvent, TaskListState> {
   final WatchTasksUseCase watchTasksUseCase;
   final UpdateTaskUseCase updateTaskUseCase;
   final DeleteTaskUseCase deleteTaskUseCase;
-  final SyncTasksUseCase syncUseCase;
-  final TaskRepository repository;
 
   StreamSubscription? _tasksSubscription;
 
@@ -101,10 +99,7 @@ class TaskListBloc extends Bloc<TaskListEvent, TaskListState> {
     required this.watchTasksUseCase,
     required this.updateTaskUseCase,
     required this.deleteTaskUseCase,
-    required this.syncUseCase,
-    required this.repository,
   }) : super(TaskListLoading()) {
-    on<InitTasks>(_onInitTasks);
     on<LoadTasks>(_onLoadTasks);
     on<_TasksUpdated>(_onTasksUpdated);
     on<FilterTasks>(_onFilterTasks);
@@ -112,21 +107,7 @@ class TaskListBloc extends Bloc<TaskListEvent, TaskListState> {
     on<UpdateTaskStatusEvent>(_onUpdateStatus);
   }
 
-  // 🔥 INIT (главный)
-  Future<void> _onInitTasks(InitTasks event, Emitter<TaskListState> emit) async {
-    try {
-      // 1. realtime listener
-      repository.startRealtimeSync();
 
-      // 2. sync local <-> cloud
-      await syncUseCase();
-
-      // 3. начать слушать локальные данные
-      add(LoadTasks());
-    } catch (e) {
-      emit(TaskListError('Init failed'));
-    }
-  }
 
   // 🔁 слушаем local DB
   void _onLoadTasks(LoadTasks event, Emitter<TaskListState> emit) {

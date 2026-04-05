@@ -55,8 +55,6 @@ Future<void> configureDependencies() async {
         watchTasksUseCase: getIt(),
         updateTaskUseCase: getIt(),
         deleteTaskUseCase: getIt(),
-        syncUseCase: getIt(),
-        repository: getIt(),
       ));
   getIt.registerFactory(() => TaskDetailBloc(
         createUseCase: getIt(),

@@ -5,7 +5,7 @@ import '../datasources/remote/task_remote_ds.dart';
 import '../datasources/remote/api_remote_ds.dart';
 import '../models/task_model.dart';
 import 'package:uuid/uuid.dart';
-import '../../core/utils/logger.dart';
+
 
 class TaskRepositoryImpl implements TaskRepository {
   bool _isRealtimeStarted = false;
@@ -63,9 +63,8 @@ class TaskRepositoryImpl implements TaskRepository {
     await localDs.deleteTask(id);
     try {
       await remoteDs.deleteRemoteTask(id);
-      appLogger.i('Deleted remote task: $id');
-    } catch (e, stackTrace) {
-      appLogger.w('Offline fallback for deleting task $id', error: e, stackTrace: stackTrace);
+    } catch (_) {
+      // offline fallback
     }
   }
 
@@ -78,9 +77,8 @@ class TaskRepositoryImpl implements TaskRepository {
       try {
         await remoteDs.pushTask(task);
         await localDs.markAsSynced(task.id);
-        appLogger.i('Synced local task to remote: ${task.id}');
-      } catch (e, stackTrace) {
-        appLogger.w('Failed to push task ${task.id} to cloud (Offline?)', error: e, stackTrace: stackTrace);
+      } catch (_) {
+        // offline fallback
       }
     }
 
@@ -92,9 +90,8 @@ class TaskRepositoryImpl implements TaskRepository {
       for (final task in remoteTasks) {
         await localDs.upsertTask(task);
       }
-      appLogger.i('Successfully merged remote tasks into local storage.');
-    } catch (e, stackTrace) {
-      appLogger.w('Failed to fetch remote tasks (Offline?)', error: e, stackTrace: stackTrace);
+    } catch (_) {
+      // offline fallback
     }
   }
 
@@ -134,9 +131,8 @@ class TaskRepositoryImpl implements TaskRepository {
     try {
       await remoteDs.pushTask(task);
       await localDs.markAsSynced(task.id);
-      appLogger.i('Pushed local task to remote: ${task.id}');
-    } catch (e, stackTrace) {
-      appLogger.w('Failed to push task to remote immediately', error: e, stackTrace: stackTrace);
+    } catch (_) {
+      // offline fallback
     }
   }
 

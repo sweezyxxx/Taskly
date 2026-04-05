@@ -24,7 +24,7 @@ class TasklyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<SettingsBloc>(
-          create: (_) => getIt<SettingsBloc>()..add(LoadSettings())..add(SyncData()),
+          create: (_) => getIt<SettingsBloc>()..add(LoadSettings()),
         ),
         BlocProvider<TaskListBloc>(
           create: (_) => getIt<TaskListBloc>()..add(LoadTasks()),
