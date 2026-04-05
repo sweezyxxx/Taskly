@@ -16,8 +16,53 @@ import '../presentation/blocs/stats_bloc.dart';
 import '../presentation/blocs/task_list_bloc.dart';
 import 'di/injection.dart';
 
-class TasklyApp extends StatelessWidget {
+class TasklyApp extends StatefulWidget {
   const TasklyApp({super.key});
+
+  @override
+  State<TasklyApp> createState() => _TasklyAppState();
+}
+
+class _TasklyAppState extends State<TasklyApp> {
+  late final GoRouter _router;
+
+  @override
+  void initState() {
+    super.initState();
+    _router = GoRouter(
+      initialLocation: '/',
+      errorBuilder: (context, state) => const ErrorScreen(),
+      routes: [
+        GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
+        GoRoute(
+          path: '/task/create',
+          builder: (context, state) => const CreateTaskScreen(),
+        ),
+        GoRoute(
+          path: '/task/:id/edit',
+          builder: (context, state) {
+            final task = state.extra as TaskEntity?;
+            return CreateTaskScreen(taskToEdit: task);
+          },
+        ),
+        GoRoute(
+          path: '/task/:id',
+          builder: (context, state) {
+            final taskId = state.pathParameters['id']!;
+            return TaskDetailScreen(taskId: taskId);
+          },
+        ),
+        GoRoute(
+          path: '/statistics',
+          builder: (context, state) => const StatisticsScreen(),
+        ),
+        GoRoute(
+          path: '/settings',
+          builder: (context, state) => const SettingsScreen(),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,37 +95,3 @@ class TasklyApp extends StatelessWidget {
     );
   }
 }
-
-final GoRouter _router = GoRouter(
-  initialLocation: '/',
-  errorBuilder: (context, state) => const ErrorScreen(),
-  routes: [
-    GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
-    GoRoute(
-      path: '/task/create',
-      builder: (context, state) => const CreateTaskScreen(),
-    ),
-    GoRoute(
-      path: '/task/:id/edit',
-      builder: (context, state) {
-        final task = state.extra as TaskEntity?;
-        return CreateTaskScreen(taskToEdit: task);
-      },
-    ),
-    GoRoute(
-      path: '/task/:id',
-      builder: (context, state) {
-        final taskId = state.pathParameters['id']!;
-        return TaskDetailScreen(taskId: taskId);
-      },
-    ),
-    GoRoute(
-      path: '/statistics',
-      builder: (context, state) => const StatisticsScreen(),
-    ),
-    GoRoute(
-      path: '/settings',
-      builder: (context, state) => const SettingsScreen(),
-    ),
-  ],
-);

@@ -42,4 +42,22 @@ void main() {
     verify(() => repository.createTask(tTask)).called(1);
     verifyNoMoreInteractions(repository);
   });
+
+  test('should call deleteTask on the repository', () async {
+    final deleteUseCase = DeleteTaskUseCase(repository);
+    when(() => repository.deleteTask(any())).thenAnswer((_) async => Future.value());
+
+    await deleteUseCase('1');
+
+    verify(() => repository.deleteTask('1')).called(1);
+  });
+
+  test('should call syncWithCloud on the repository', () async {
+    final syncUseCase = SyncTasksUseCase(repository);
+    when(() => repository.syncWithCloud()).thenAnswer((_) async => Future.value());
+
+    await syncUseCase();
+
+    verify(() => repository.syncWithCloud()).called(1);
+  });
 }
