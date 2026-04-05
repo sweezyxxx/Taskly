@@ -41,14 +41,6 @@ class SettingsScreen extends StatelessWidget {
               ),
               const Divider(),
               
-              ListTile(
-                leading: const Icon(Icons.person),
-                title: const Text('Username'),
-                subtitle: Text(state.username),
-                trailing: const Icon(Icons.edit, size: 20),
-                onTap: () => _showUsernameDialog(context, state.username),
-              ),
-              const Divider(),
 
               const SizedBox(height: 24),
               Text('Cloud & Data', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -92,30 +84,6 @@ class SettingsScreen extends StatelessWidget {
             ],
           );
         },
-      ),
-    );
-  }
-
-  void _showUsernameDialog(BuildContext context, String currentName) {
-    final controller = TextEditingController(text: currentName);
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Update Username'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(labelText: 'Username'),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () {
-              context.read<SettingsBloc>().add(UpdateUsername(controller.text));
-              Navigator.pop(ctx);
-            },
-            child: const Text('Save'),
-          ),
-        ],
       ),
     );
   }

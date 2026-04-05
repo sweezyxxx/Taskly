@@ -3,8 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 abstract class PrefsLocalDataSource {
   Future<bool> getThemeMode(); // true for dark, false for light
   Future<void> setThemeMode(bool isDark);
-  Future<String> getUsername();
-  Future<void> setUsername(String name);
 }
 
 class PrefsLocalDataSourceImpl implements PrefsLocalDataSource {
@@ -13,7 +11,6 @@ class PrefsLocalDataSourceImpl implements PrefsLocalDataSource {
   PrefsLocalDataSourceImpl({required this.prefs});
 
   static const _kThemeMode = 'theme_mode';
-  static const _kUsername = 'username';
 
   @override
   Future<bool> getThemeMode() async {
@@ -25,13 +22,4 @@ class PrefsLocalDataSourceImpl implements PrefsLocalDataSource {
     await prefs.setBool(_kThemeMode, isDark);
   }
 
-  @override
-  Future<String> getUsername() async {
-    return prefs.getString(_kUsername) ?? 'User';
-  }
-
-  @override
-  Future<void> setUsername(String name) async {
-    await prefs.setString(_kUsername, name);
-  }
 }

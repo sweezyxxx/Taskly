@@ -18,12 +18,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: BlocSelector<SettingsBloc, SettingsState, String>(
-          selector: (state) => state.username,
-          builder: (context, username) {
-            return Text('Hello, $username');
-          },
-        ),
+        title: const Text('Tasks'),
         actions: [
           IconButton(
             icon: const Icon(Icons.bar_chart),

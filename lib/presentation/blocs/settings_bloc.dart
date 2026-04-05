@@ -13,12 +13,6 @@ class LoadSettings extends SettingsEvent {}
 
 class ToggleTheme extends SettingsEvent {}
 
-class UpdateUsername extends SettingsEvent {
-  final String username;
-  const UpdateUsername(this.username);
-  @override List<Object?> get props => [username];
-}
-
 class SyncData extends SettingsEvent {}
 
 class ImportData extends SettingsEvent {}
@@ -26,14 +20,12 @@ class ImportData extends SettingsEvent {}
 // --- States ---
 class SettingsState extends Equatable {
   final bool isDarkMode;
-  final String username;
   final bool isSyncingCloud;
   final bool isImportingData;
   final String? message;
 
   const SettingsState({
     required this.isDarkMode,
-    required this.username,
     this.isSyncingCloud = false,
     this.isImportingData = false,
     this.message,
@@ -41,21 +33,19 @@ class SettingsState extends Equatable {
 
   SettingsState copyWith({
     bool? isDarkMode,
-    String? username,
     bool? isSyncingCloud,
     bool? isImportingData,
     String? message,
   }) {
     return SettingsState(
       isDarkMode: isDarkMode ?? this.isDarkMode,
-      username: username ?? this.username,
       isSyncingCloud: isSyncingCloud ?? this.isSyncingCloud,
       isImportingData: isImportingData ?? this.isImportingData,
       message: message, // Allow null override
     );
   }
 
-  @override List<Object?> get props => [isDarkMode, username, isSyncingCloud, isImportingData, message];
+  @override List<Object?> get props => [isDarkMode, isSyncingCloud, isImportingData, message];
 }
 
 // --- BLoC ---
@@ -68,18 +58,16 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     required this.settingsRepo,
     required this.syncUseCase,
     required this.importUseCase,
-  }) : super(const SettingsState(isDarkMode: false, username: 'User')) {
+  }) : super(const SettingsState(isDarkMode: false)) {
     on<LoadSettings>(_onLoad);
     on<ToggleTheme>(_onToggleTheme);
-    on<UpdateUsername>(_onUpdateUsername);
     on<SyncData>(_onSyncData);
     on<ImportData>(_onImportData);
   }
 
   Future<void> _onLoad(LoadSettings event, Emitter<SettingsState> emit) async {
     final isDark = await settingsRepo.isDarkMode();
-    final name = await settingsRepo.getUsername();
-    emit(state.copyWith(isDarkMode: isDark, username: name));
+    emit(state.copyWith(isDarkMode: isDark));
   }
 
   Future<void> _onToggleTheme(ToggleTheme event, Emitter<SettingsState> emit) async {
@@ -88,10 +76,6 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     emit(state.copyWith(isDarkMode: newMode));
   }
 
-  Future<void> _onUpdateUsername(UpdateUsername event, Emitter<SettingsState> emit) async {
-    await settingsRepo.setUsername(event.username);
-    emit(state.copyWith(username: event.username));
-  }
 
   Future<void> _onSyncData(SyncData event, Emitter<SettingsState> emit) async {
     emit(state.copyWith(isSyncingCloud: true, message: null));
