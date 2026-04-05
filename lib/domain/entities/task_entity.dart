@@ -6,7 +6,7 @@ enum TaskStatus { todo, done }
 // ignore: constant_identifier_names
 enum TaskPriority { low, medium, high }
 
-class TaskEntity extends Equatable{
+class TaskEntity extends Equatable {
   final String id;
   final String title;
   final String description;

@@ -18,19 +18,21 @@ class TaskDetailScreen extends StatelessWidget {
         actions: [
           BlocBuilder<TaskListBloc, TaskListState>(
             builder: (context, state) {
-               if (state is TaskListLoaded) {
-                 final taskList = state.allTasks.where((t) => t.id == taskId).toList();
-                 if (taskList.isNotEmpty) {
-                    final task = taskList.first;
-                    return IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () {
-                        context.push('/task/${task.id}/edit', extra: task);
-                      },
-                    );
-                 }
-               }
-               return const SizedBox.shrink();
+              if (state is TaskListLoaded) {
+                final taskList = state.allTasks
+                    .where((t) => t.id == taskId)
+                    .toList();
+                if (taskList.isNotEmpty) {
+                  final task = taskList.first;
+                  return IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () {
+                      context.push('/task/${task.id}/edit', extra: task);
+                    },
+                  );
+                }
+              }
+              return const SizedBox.shrink();
             },
           ),
         ],
@@ -38,7 +40,9 @@ class TaskDetailScreen extends StatelessWidget {
       body: BlocBuilder<TaskListBloc, TaskListState>(
         builder: (context, state) {
           if (state is TaskListLoaded) {
-            final taskList = state.allTasks.where((t) => t.id == taskId).toList();
+            final taskList = state.allTasks
+                .where((t) => t.id == taskId)
+                .toList();
             if (taskList.isEmpty) {
               return const Center(child: Text('Task not found.'));
             }
@@ -51,14 +55,31 @@ class TaskDetailScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(task.title, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  Text(
+                    task.title,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 12),
-                  Text(task.description, style: const TextStyle(fontSize: 16, color:  AppColors.textSecondaryDark)),
+                  Text(
+                    task.description,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: AppColors.textSecondaryDark,
+                    ),
+                  ),
                   const SizedBox(height: 24),
                   _buildInfoRow('Status', task.status.name.toUpperCase()),
                   _buildInfoRow('Priority', task.priority.name.toUpperCase()),
                   _buildInfoRow('Created', dateFormat.format(task.createdAt)),
-                  _buildInfoRow('Due to', task.dueDate != null ? dateFormat.format(task.dueDate!) : 'None'),
+                  _buildInfoRow(
+                    'Due to',
+                    task.dueDate != null
+                        ? dateFormat.format(task.dueDate!)
+                        : 'None',
+                  ),
                 ],
               ),
             );

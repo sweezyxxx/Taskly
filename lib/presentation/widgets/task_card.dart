@@ -10,11 +10,7 @@ class TaskCard extends StatelessWidget {
   final TaskEntity task;
   final VoidCallback onToggleStatus;
 
-  const TaskCard({
-    super.key,
-    required this.task,
-    required this.onToggleStatus,
-  });
+  const TaskCard({super.key, required this.task, required this.onToggleStatus});
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +71,9 @@ class TaskCard extends StatelessWidget {
                       children: [
                         _buildPriorityChip(),
                         const Spacer(),
-                        if (task.dueDate != null && task.status != TaskStatus.done) _buildTimeProgress(),
+                        if (task.dueDate != null &&
+                            task.status != TaskStatus.done)
+                          _buildTimeProgress(),
                       ],
                     ),
                   ],
@@ -90,7 +88,7 @@ class TaskCard extends StatelessWidget {
 
   Widget _buildCheckbox() {
     bool isDone = task.status == TaskStatus.done;
-    
+
     Color borderColor = Colors.grey.shade400;
     Color bgColor = Colors.transparent;
     Widget? child;
@@ -108,10 +106,7 @@ class TaskCard extends StatelessWidget {
         height: 24,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(
-            color: borderColor,
-            width: 2,
-          ),
+          border: Border.all(color: borderColor, width: 2),
           color: bgColor,
         ),
         child: child,
@@ -158,7 +153,7 @@ class TaskCard extends StatelessWidget {
 
   Widget _buildDeadlineBadge() {
     final dueDate = task.dueDate!;
-    
+
     Color color = AppColors.primary;
     String text = DateFormat('MMM d').format(dueDate);
 
@@ -187,8 +182,16 @@ class TaskCard extends StatelessWidget {
 
   Widget _buildTimeProgress() {
     final now = DateTime.now();
-    final createdDay = DateTime(task.createdAt.year, task.createdAt.month, task.createdAt.day);
-    final dueDay = DateTime(task.dueDate!.year, task.dueDate!.month, task.dueDate!.day);
+    final createdDay = DateTime(
+      task.createdAt.year,
+      task.createdAt.month,
+      task.createdAt.day,
+    );
+    final dueDay = DateTime(
+      task.dueDate!.year,
+      task.dueDate!.month,
+      task.dueDate!.day,
+    );
     final today = DateTime(now.year, now.month, now.day);
 
     final totalDays = dueDay.difference(createdDay).inDays + 1;
@@ -198,15 +201,17 @@ class TaskCard extends StatelessWidget {
     } else {
       elapsedDays = today.difference(createdDay).inDays;
     }
-    
-    final progress = totalDays <= 0 ? 1.0 : (elapsedDays / totalDays).clamp(0.0, 1.0);
+
+    final progress = totalDays <= 0
+        ? 1.0
+        : (elapsedDays / totalDays).clamp(0.0, 1.0);
     final isOverdue = today.isAfter(dueDay);
 
     final Color barColor = isOverdue
         ? AppColors.error
         : progress > 0.75
-            ? AppColors.warning
-            : AppColors.primary;
+        ? AppColors.warning
+        : AppColors.primary;
 
     final String label = isOverdue
         ? 'Overdue'

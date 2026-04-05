@@ -37,6 +37,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<int> insertTask(TasksCompanion task) {
+    // InsertMode.insertOrReplace will automatically update the row if the primary key (id) already exists.
     return into(tasks).insert(task, mode: InsertMode.insertOrReplace);
   }
 
@@ -50,6 +51,8 @@ class AppDatabase extends _$AppDatabase {
 }
 
 LazyDatabase _openConnection() {
+  // LazyDatabase defers the database initialization until the exact moment the first query is executed.
+  // This helps minimize the startup time of the application by moving IO operations off the critical path.
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(p.join(dbFolder.path, 'db.sqlite'));

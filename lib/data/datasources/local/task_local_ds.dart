@@ -22,9 +22,10 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
 
   @override
   Stream<List<TaskModel>> watchTasks() {
-    return db.select(db.tasks).watch().map(
-      (rows) => rows.map(TaskModel.fromDrift).toList(),
-    );
+    return db
+        .select(db.tasks)
+        .watch()
+        .map((rows) => rows.map(TaskModel.fromDrift).toList());
   }
 
   @override
@@ -48,35 +49,36 @@ class TaskLocalDataSourceImpl implements TaskLocalDataSource {
     await (db.delete(db.tasks)..where((t) => t.id.equals(id))).go();
   }
 
-  /// 🔥 НЕ синкнутые задачи
+  // Retrieves tasks that have not yet been synchronized with the cloud backend.
   @override
   Future<List<TaskModel>> getUnsyncedTasks() async {
-    final rows = await (db.select(db.tasks)
-          ..where((t) => t.isSynced.equals(false)))
-        .get();
+    final rows = await (db.select(
+      db.tasks,
+    )..where((t) => t.isSynced.equals(false))).get();
 
     return rows.map(TaskModel.fromDrift).toList();
   }
 
-  /// 🔥 пометить как synced
+  // Marks a specific task as successfully synchronized with the cloud.
   @override
   Future<void> markAsSynced(String id) async {
     await (db.update(db.tasks)..where((t) => t.id.equals(id))).write(
-      TasksCompanion(
-        isSynced: const Value(true),
-      ),
+      TasksCompanion(isSynced: const Value(true)),
     );
   }
 
-  /// 🔥 главный метод для merge
+  // Inserts a new task or updates it if it already exists, ensuring it is marked as synced. 
+  // This is the core method for merging remote data locally without conflicts.
   @override
   Future<void> upsertTask(TaskModel task) async {
-    await db.into(db.tasks).insertOnConflictUpdate(
-      task.copyWith(isSynced: true).toDriftCompanion(),
-    );
+    await db
+        .into(db.tasks)
+        .insertOnConflictUpdate(
+          task.copyWith(isSynced: true).toDriftCompanion(),
+        );
   }
 
-  /// 🔥 очистить все при выходе из аккаунта
+  // Clears the entire local database. Typically called during logout to prevent data leaks between different users.
   @override
   Future<void> clearAllTasks() async {
     await db.delete(db.tasks).go();

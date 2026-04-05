@@ -83,5 +83,4 @@ class DefaultFirebaseOptions {
     authDomain: 'cpmd-final.firebaseapp.com',
     storageBucket: 'cpmd-final.firebasestorage.app',
   );
-
 }

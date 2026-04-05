@@ -28,6 +28,7 @@ class DeleteTaskUseCase {
 class SyncTasksUseCase {
   final TaskRepository repository;
   SyncTasksUseCase(this.repository);
+
   /// Synchronizes local and remote tasks
   Future<void> call() => repository.syncWithCloud();
 }

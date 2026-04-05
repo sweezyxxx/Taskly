@@ -3,10 +3,10 @@ import 'package:equatable/equatable.dart';
 import '../../../domain/repositories/settings_repository.dart';
 import '../../../domain/usecases/task_usecases.dart';
 
-// --- Events ---
 abstract class SettingsEvent extends Equatable {
   const SettingsEvent();
-  @override List<Object?> get props => [];
+  @override
+  List<Object?> get props => [];
 }
 
 class LoadSettings extends SettingsEvent {}
@@ -17,7 +17,6 @@ class SyncData extends SettingsEvent {}
 
 class ImportData extends SettingsEvent {}
 
-// --- States ---
 class SettingsState extends Equatable {
   final bool isDarkMode;
   final bool isSyncingCloud;
@@ -45,10 +44,15 @@ class SettingsState extends Equatable {
     );
   }
 
-  @override List<Object?> get props => [isDarkMode, isSyncingCloud, isImportingData, message];
+  @override
+  List<Object?> get props => [
+    isDarkMode,
+    isSyncingCloud,
+    isImportingData,
+    message,
+  ];
 }
 
-// --- BLoC ---
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final SettingsRepository settingsRepo;
   final SyncTasksUseCase syncUseCase;
@@ -70,12 +74,14 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     emit(state.copyWith(isDarkMode: isDark));
   }
 
-  Future<void> _onToggleTheme(ToggleTheme event, Emitter<SettingsState> emit) async {
+  Future<void> _onToggleTheme(
+    ToggleTheme event,
+    Emitter<SettingsState> emit,
+  ) async {
     final newMode = !state.isDarkMode;
     await settingsRepo.setDarkMode(newMode);
     emit(state.copyWith(isDarkMode: newMode));
   }
-
 
   Future<void> _onSyncData(SyncData event, Emitter<SettingsState> emit) async {
     emit(state.copyWith(isSyncingCloud: true, message: null));
@@ -87,13 +93,23 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     }
   }
 
-    Future<void> _onImportData(ImportData event, Emitter<SettingsState> emit) async {
+  Future<void> _onImportData(
+    ImportData event,
+    Emitter<SettingsState> emit,
+  ) async {
     emit(state.copyWith(isImportingData: true, message: null));
     try {
       await importUseCase();
-      emit(state.copyWith(isImportingData: false, message: 'Imported sample tasks!'));
+      emit(
+        state.copyWith(
+          isImportingData: false,
+          message: 'Imported sample tasks!',
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(isImportingData: false, message: 'Import failed: $e'));
+      emit(
+        state.copyWith(isImportingData: false, message: 'Import failed: $e'),
+      );
     }
   }
 }

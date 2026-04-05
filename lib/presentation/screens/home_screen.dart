@@ -58,7 +58,7 @@ class HomeScreen extends StatelessWidget {
                   if (tasks.isEmpty) {
                     return _buildEmptyState();
                   }
-                  
+
                   return RefreshIndicator(
                     onRefresh: () async {
                       context.read<SettingsBloc>().add(SyncData());
@@ -73,21 +73,28 @@ class HomeScreen extends StatelessWidget {
                             color: Colors.red,
                             alignment: Alignment.centerRight,
                             padding: const EdgeInsets.only(right: 20),
-                            child: const Icon(Icons.delete, color: Colors.white),
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
                           ),
                           direction: DismissDirection.endToStart,
                           onDismissed: (_) {
-                            context.read<TaskListBloc>().add(DeleteTaskEvent(task.id));
+                            context.read<TaskListBloc>().add(
+                              DeleteTaskEvent(task.id),
+                            );
                             ScaffoldMessenger.of(context)
                               ..hideCurrentSnackBar()
                               ..showSnackBar(
                                 SnackBar(
-                                  content: Text('Task deleted', style: TextStyle(
-                                    color: Colors.white),), 
+                                  content: Text(
+                                    'Task deleted',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                   backgroundColor: Colors.red,
                                   duration: Duration(milliseconds: 800),
                                 ),
-                            );
+                              );
                           },
                           child: TaskCard(
                             task: task,
@@ -98,9 +105,9 @@ class HomeScreen extends StatelessWidget {
                               } else {
                                 newStatus = TaskStatus.todo;
                               }
-                              
+
                               context.read<TaskListBloc>().add(
-                                UpdateTaskStatusEvent(task, newStatus)
+                                UpdateTaskStatusEvent(task, newStatus),
                               );
                             },
                           ),
@@ -129,13 +136,18 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.assignment_turned_in, size: 80, color: Colors.grey.shade300)
-              .animate()
-              .scale(duration: 400.ms),
+          Icon(
+            Icons.assignment_turned_in,
+            size: 80,
+            color: Colors.grey.shade300,
+          ).animate().scale(duration: 400.ms),
           const SizedBox(height: 16),
           Text(
             'No tasks here yet!',
-            style: GoogleFonts.outfit(fontSize: 20, color: Colors.grey.shade600),
+            style: GoogleFonts.outfit(
+              fontSize: 20,
+              color: Colors.grey.shade600,
+            ),
           ).animate().fadeIn(delay: 200.ms),
         ],
       ),

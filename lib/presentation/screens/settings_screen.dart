@@ -31,19 +31,33 @@ class SettingsScreen extends StatelessWidget {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              Text('Preferences', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text(
+                'Preferences',
+                style: GoogleFonts.outfit(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 16),
               SwitchListTile(
                 title: const Text('Dark Mode'),
                 value: state.isDarkMode,
-                onChanged: (val) => context.read<SettingsBloc>().add(ToggleTheme()),
-                secondary: Icon(state.isDarkMode ? Icons.dark_mode : Icons.light_mode),
+                onChanged: (val) =>
+                    context.read<SettingsBloc>().add(ToggleTheme()),
+                secondary: Icon(
+                  state.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                ),
               ),
               const Divider(),
-              
 
               const SizedBox(height: 24),
-              Text('Cloud & Data', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text(
+                'Cloud & Data',
+                style: GoogleFonts.outfit(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 16),
 
               ListTile(
@@ -51,19 +65,31 @@ class SettingsScreen extends StatelessWidget {
                 title: const Text('Sync with Cloud'),
                 subtitle: const Text('Upload local tasks to Firestore'),
                 trailing: state.isSyncingCloud
-                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
                     : const Icon(Icons.chevron_right),
-                onTap: state.isSyncingCloud ? null : () => context.read<SettingsBloc>().add(SyncData()),
+                onTap: state.isSyncingCloud
+                    ? null
+                    : () => context.read<SettingsBloc>().add(SyncData()),
               ),
-              
+
               ListTile(
                 leading: const Icon(Icons.download, color: AppColors.secondary),
                 title: const Text('Import Sample Tasks'),
                 subtitle: const Text('Fetch from jsonplaceholder API'),
-                trailing: state.isImportingData 
-                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                trailing: state.isImportingData
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
                     : const Icon(Icons.chevron_right),
-                onTap: state.isImportingData ? null : () => context.read<SettingsBloc>().add(ImportData()),
+                onTap: state.isImportingData
+                    ? null
+                    : () => context.read<SettingsBloc>().add(ImportData()),
               ),
               const SizedBox(height: 24),
               Text(
@@ -91,7 +117,7 @@ class SettingsScreen extends StatelessWidget {
   void logout() async {
     // Clear local data before logging out so new user starts with empty/own DB
     await getIt<TaskRepository>().clearLocalData();
-    
+
     final auth = AuthService();
     await auth.signOut();
   }

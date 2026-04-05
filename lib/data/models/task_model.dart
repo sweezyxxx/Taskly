@@ -16,7 +16,8 @@ class TaskModel extends TaskEntity {
     required super.isSynced,
   });
 
-  /// 🔥 из Firestore (id передаём отдельно!)
+  // Creates a TaskModel from a Firestore document. 
+  // The ID is passed separately since it corresponds to the document ID in Firestore.
   factory TaskModel.fromJson(Map<String, dynamic> json, String id) {
     return TaskModel(
       id: id,
@@ -36,12 +37,13 @@ class TaskModel extends TaskEntity {
           ? DateTime.parse(json['dueDate'] as String).toLocal()
           : null,
 
-      /// ❗ всегда true — потому что пришло из cloud
+      // Since this data was just fetched from the cloud, it is definitively synced.
       isSynced: true,
     );
   }
 
-  /// 🔥 для Firestore (без isSynced!)
+  // Serializes the TaskModel to a format suitable for Firestore. 
+  // The isSynced flag is omitted as it is a local-only tracking concept.
   Map<String, dynamic> toJson() {
     return {
       'title': title,

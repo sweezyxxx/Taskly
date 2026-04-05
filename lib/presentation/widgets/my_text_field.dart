@@ -32,13 +32,17 @@ class MyTextField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: TextStyle(
-            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+            color: isDark
+                ? AppColors.textSecondaryDark
+                : AppColors.textSecondaryLight,
           ),
           prefixIcon: prefixIcon != null
               ? Icon(prefixIcon, color: AppColors.primary)
               : null,
           filled: true,
-          fillColor: isDark ? AppColors.surfaceDark : AppColors.primary.withValues(alpha: 0.1),
+          fillColor: isDark
+              ? AppColors.surfaceDark
+              : AppColors.primary.withValues(alpha: 0.1),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,

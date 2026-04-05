@@ -6,7 +6,6 @@ import '../datasources/remote/api_remote_ds.dart';
 import '../models/task_model.dart';
 import 'package:uuid/uuid.dart';
 
-
 class TaskRepositoryImpl implements TaskRepository {
   bool _isRealtimeStarted = false;
   final TaskLocalDataSource localDs;
@@ -38,7 +37,7 @@ class TaskRepositoryImpl implements TaskRepository {
       isSynced: false,
     );
     await localDs.insertTask(model);
-    _pushToCloud(model); // fire and forget
+    _pushToCloud(model); // Run asynchronously without awaiting so UI isn't blocked
   }
 
   @override
@@ -64,13 +63,14 @@ class TaskRepositoryImpl implements TaskRepository {
     try {
       await remoteDs.deleteRemoteTask(id);
     } catch (_) {
-      // offline fallback
+      // If we are offline, the cloud deletion fails but local deletion succeeded.
+      // A more robust implementation might queue deletions.
     }
   }
 
   @override
   Future<void> syncWithCloud() async {
-    /// 1. отправляем НЕ синкнутые задачи
+    // 1. Send all unsynced local tasks to the cloud
     final unsynced = await localDs.getUnsyncedTasks();
 
     for (final task in unsynced) {
@@ -78,20 +78,20 @@ class TaskRepositoryImpl implements TaskRepository {
         await remoteDs.pushTask(task);
         await localDs.markAsSynced(task.id);
       } catch (_) {
-        // offline fallback
+        // If pushing fails, the task remains unsynced for future attempts
       }
     }
 
-    /// 2. получаем remote данные
+    // 2. Fetch the latest remote data from the cloud
     try {
       final remoteTasks = await remoteDs.watchRemoteTasks().first;
 
-      /// 3. merge в local
+      // 3. Merge remote tasks into the local database (upsert updates existing or inserts new)
       for (final task in remoteTasks) {
         await localDs.upsertTask(task);
       }
     } catch (_) {
-      // offline fallback
+      // Ignore errors if the device is currently offline
     }
   }
 
@@ -114,7 +114,7 @@ class TaskRepositoryImpl implements TaskRepository {
       await localDs.insertTask(task);
     }
   }
-  
+
   @override
   void startRealtimeSync() {
     if (_isRealtimeStarted) return;
@@ -132,13 +132,13 @@ class TaskRepositoryImpl implements TaskRepository {
       await remoteDs.pushTask(task);
       await localDs.markAsSynced(task.id);
     } catch (_) {
-      // offline fallback
+      // If push fails, it will remain unsynced and retry on the next manual sync
     }
   }
 
   @override
   Future<void> clearLocalData() async {
     await localDs.clearAllTasks();
-    _isRealtimeStarted = false; // allow restarting sync for new user
+    _isRealtimeStarted = false; // Reset realtime sync flag so the next user can initiate their own sync process
   }
 }

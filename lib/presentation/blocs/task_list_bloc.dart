@@ -5,15 +5,11 @@ import 'package:equatable/equatable.dart';
 import '../../../domain/entities/task_entity.dart';
 import '../../../domain/usecases/task_usecases.dart';
 
-
-// --- Events ---
 abstract class TaskListEvent extends Equatable {
   const TaskListEvent();
   @override
   List<Object?> get props => [];
 }
-
-
 
 class LoadTasks extends TaskListEvent {}
 
@@ -43,7 +39,6 @@ class UpdateTaskStatusEvent extends TaskListEvent {
   List<Object?> get props => [task, newStatus];
 }
 
-// --- States ---
 abstract class TaskListState extends Equatable {
   const TaskListState();
 
@@ -77,7 +72,6 @@ class TaskListError extends TaskListState {
   List<Object?> get props => [message];
 }
 
-// --- Internal Event ---
 class _TasksUpdated extends TaskListEvent {
   final List<TaskEntity> tasks;
 
@@ -87,7 +81,6 @@ class _TasksUpdated extends TaskListEvent {
   List<Object?> get props => [tasks];
 }
 
-// --- BLoC ---
 class TaskListBloc extends Bloc<TaskListEvent, TaskListState> {
   final WatchTasksUseCase watchTasksUseCase;
   final UpdateTaskUseCase updateTaskUseCase;
@@ -107,9 +100,6 @@ class TaskListBloc extends Bloc<TaskListEvent, TaskListState> {
     on<UpdateTaskStatusEvent>(_onUpdateStatus);
   }
 
-
-
-  // 🔁 слушаем local DB
   void _onLoadTasks(LoadTasks event, Emitter<TaskListState> emit) {
     _tasksSubscription?.cancel();
 
@@ -120,38 +110,48 @@ class TaskListBloc extends Bloc<TaskListEvent, TaskListState> {
     });
   }
 
-  // 📊 обновление UI
   void _onTasksUpdated(_TasksUpdated event, Emitter<TaskListState> emit) {
-    final currentFilter =
-        state is TaskListLoaded ? (state as TaskListLoaded).currentFilter : null;
+    final currentFilter = state is TaskListLoaded
+        ? (state as TaskListLoaded).currentFilter
+        : null;
 
-    emit(TaskListLoaded(
-      allTasks: event.tasks,
-      filteredTasks: _applyFilter(event.tasks, currentFilter),
-      currentFilter: currentFilter,
-    ));
+    emit(
+      TaskListLoaded(
+        allTasks: event.tasks,
+        filteredTasks: _applyFilter(event.tasks, currentFilter),
+        currentFilter: currentFilter,
+      ),
+    );
   }
 
-  // 🔍 фильтр
   void _onFilterTasks(FilterTasks event, Emitter<TaskListState> emit) {
     if (state is TaskListLoaded) {
       final currentState = state as TaskListLoaded;
 
-      emit(TaskListLoaded(
-        allTasks: currentState.allTasks,
-        filteredTasks: _applyFilter(currentState.allTasks, event.statusFilter),
-        currentFilter: event.statusFilter,
-      ));
+      emit(
+        TaskListLoaded(
+          allTasks: currentState.allTasks,
+          filteredTasks: _applyFilter(
+            currentState.allTasks,
+            event.statusFilter,
+          ),
+          currentFilter: event.statusFilter,
+        ),
+      );
     }
   }
 
-  // ❌ удаление
-  Future<void> _onDeleteTask(DeleteTaskEvent event, Emitter<TaskListState> emit) async {
+  Future<void> _onDeleteTask(
+    DeleteTaskEvent event,
+    Emitter<TaskListState> emit,
+  ) async {
     await deleteTaskUseCase(event.taskId);
   }
 
-  // 🔄 обновление статуса
-  Future<void> _onUpdateStatus(UpdateTaskStatusEvent event, Emitter<TaskListState> emit) async {
+  Future<void> _onUpdateStatus(
+    UpdateTaskStatusEvent event,
+    Emitter<TaskListState> emit,
+  ) async {
     final updatedTask = TaskEntity(
       id: event.task.id,
       title: event.task.title,
@@ -174,7 +174,6 @@ class TaskListBloc extends Bloc<TaskListEvent, TaskListState> {
   }
 }
 
-// --- helper ---
 List<TaskEntity> _applyFilter(List<TaskEntity> tasks, TaskStatus? filter) {
   if (filter == null) return tasks;
   return tasks.where((t) => t.status == filter).toList();

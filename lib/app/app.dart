@@ -24,7 +24,9 @@ class TasklyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<SettingsBloc>(
-          create: (_) => getIt<SettingsBloc>()..add(LoadSettings()),
+          create: (_) => getIt<SettingsBloc>()
+            ..add(LoadSettings())
+            ..add(SyncData()),
         ),
         BlocProvider<TaskListBloc>(
           create: (_) => getIt<TaskListBloc>()..add(LoadTasks()),
@@ -49,15 +51,11 @@ class TasklyApp extends StatelessWidget {
   }
 }
 
-
 final GoRouter _router = GoRouter(
   initialLocation: '/',
   errorBuilder: (context, state) => const ErrorScreen(),
   routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const HomeScreen(),
-    ),
+    GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
     GoRoute(
       path: '/task/create',
       builder: (context, state) => const CreateTaskScreen(),

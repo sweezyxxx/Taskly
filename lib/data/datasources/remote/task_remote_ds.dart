@@ -16,15 +16,14 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
   String get userId => FirebaseAuth.instance.currentUser!.uid;
 
   CollectionReference<Map<String, dynamic>> get _tasks =>
-    firestore
-        .collection('Users')
-        .doc(userId)
-        .collection('tasks');
+      firestore.collection('Users').doc(userId).collection('tasks');
 
   @override
   Stream<List<TaskModel>> watchRemoteTasks() {
     return _tasks.snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) => TaskModel.fromJson(doc.data(), doc.id)).toList();
+      return snapshot.docs
+          .map((doc) => TaskModel.fromJson(doc.data(), doc.id))
+          .toList();
     });
   }
 

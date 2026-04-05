@@ -11,5 +11,4 @@ class SettingsRepositoryImpl implements SettingsRepository {
 
   @override
   Future<void> setDarkMode(bool isDark) => localDs.setThemeMode(isDark);
-
 }

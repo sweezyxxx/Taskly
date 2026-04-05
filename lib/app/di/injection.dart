@@ -21,28 +21,36 @@ import '../../presentation/blocs/task_list_bloc.dart';
 final GetIt getIt = GetIt.instance;
 
 Future<void> configureDependencies() async {
-  // External
+  // Wait for SharedPreferences to instantiate before treating it as a synchronous dependency
   final sharedPreferences = await SharedPreferences.getInstance();
+  
+  // Singletons: instantiated once and reused throughout the app lifecycle
   getIt.registerLazySingleton(() => sharedPreferences);
   getIt.registerLazySingleton(() => Dio());
   getIt.registerLazySingleton(() => FirebaseFirestore.instance);
   getIt.registerLazySingleton(() => AppDatabase());
 
-  // Data sources
-  getIt.registerLazySingleton<PrefsLocalDataSource>(() => PrefsLocalDataSourceImpl(prefs: getIt()));
-  getIt.registerLazySingleton<TaskLocalDataSource>(() => TaskLocalDataSourceImpl(db: getIt()));
-  getIt.registerLazySingleton<ApiRemoteDataSource>(() => ApiRemoteDataSourceImpl(dio: getIt()));
-  getIt.registerLazySingleton<TaskRemoteDataSource>(() => TaskRemoteDataSourceImpl(firestore: getIt()));
+  getIt.registerLazySingleton<PrefsLocalDataSource>(
+    () => PrefsLocalDataSourceImpl(prefs: getIt()),
+  );
+  getIt.registerLazySingleton<TaskLocalDataSource>(
+    () => TaskLocalDataSourceImpl(db: getIt()),
+  );
+  getIt.registerLazySingleton<ApiRemoteDataSource>(
+    () => ApiRemoteDataSourceImpl(dio: getIt()),
+  );
+  getIt.registerLazySingleton<TaskRemoteDataSource>(
+    () => TaskRemoteDataSourceImpl(firestore: getIt()),
+  );
 
-  // Repositories
-  getIt.registerLazySingleton<SettingsRepository>(() => SettingsRepositoryImpl(localDs: getIt()));
-  getIt.registerLazySingleton<TaskRepository>(() => TaskRepositoryImpl(
-        localDs: getIt(),
-        remoteDs: getIt(),
-        apiDs: getIt(),
-      ));
+  getIt.registerLazySingleton<SettingsRepository>(
+    () => SettingsRepositoryImpl(localDs: getIt()),
+  );
+  getIt.registerLazySingleton<TaskRepository>(
+    () =>
+        TaskRepositoryImpl(localDs: getIt(), remoteDs: getIt(), apiDs: getIt()),
+  );
 
-  // Use cases
   getIt.registerLazySingleton(() => WatchTasksUseCase(getIt()));
   getIt.registerLazySingleton(() => CreateTaskUseCase(getIt()));
   getIt.registerLazySingleton(() => UpdateTaskUseCase(getIt()));
@@ -50,22 +58,25 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton(() => SyncTasksUseCase(getIt()));
   getIt.registerLazySingleton(() => ImportTasksUseCase(getIt()));
 
-  // BLoCs
-  getIt.registerFactory(() => TaskListBloc(
-        watchTasksUseCase: getIt(),
-        updateTaskUseCase: getIt(),
-        deleteTaskUseCase: getIt(),
-      ));
-  getIt.registerFactory(() => TaskDetailBloc(
-        createUseCase: getIt(),
-        updateUseCase: getIt(),
-      ));
-  getIt.registerFactory(() => SettingsBloc(
-        settingsRepo: getIt(),
-        syncUseCase: getIt(),
-        importUseCase: getIt(),
-      ));
-  getIt.registerFactory(() => StatsBloc(
-        watchTasksUseCase: getIt(),
-      ));
+  // BLoC Factories: A new instance is created every time a BLoC is requested.
+  // This is crucial for UI state management to prevent retaining stale state
+  // across different screen navigations.
+  getIt.registerFactory(
+    () => TaskListBloc(
+      watchTasksUseCase: getIt(),
+      updateTaskUseCase: getIt(),
+      deleteTaskUseCase: getIt(),
+    ),
+  );
+  getIt.registerFactory(
+    () => TaskDetailBloc(createUseCase: getIt(), updateUseCase: getIt()),
+  );
+  getIt.registerFactory(
+    () => SettingsBloc(
+      settingsRepo: getIt(),
+      syncUseCase: getIt(),
+      importUseCase: getIt(),
+    ),
+  );
+  getIt.registerFactory(() => StatsBloc(watchTasksUseCase: getIt()));
 }

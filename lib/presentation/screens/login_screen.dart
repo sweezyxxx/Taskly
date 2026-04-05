@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:taskly/app/theme/app_colors.dart';
 import 'package:taskly/data/services/auth_service.dart';
-import 'package:taskly/presentation/widgets/my_button.dart';
-import 'package:taskly/presentation/widgets/my_text_field.dart';
 
 class LoginScreen extends StatelessWidget {
   final void Function()? onTap;
@@ -44,98 +42,135 @@ class LoginScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SingleChildScrollView(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Logo
-              Container(
-                width: 96,
-                height: 96,
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(24),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: SizedBox(
+            height:
+                MediaQuery.of(context).size.height -
+                MediaQuery.of(context).padding.top -
+                MediaQuery.of(context).padding.bottom,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Spacer(flex: 2),
+
+                Center(
+                  child: Container(
+                    width: 96,
+                    height: 96,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    padding: const EdgeInsets.all(12),
+                    child: Image.asset(
+                      'assets/icon/app_icon.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
                 ),
-                padding: const EdgeInsets.all(12),
-                child: Image.asset(
-                  'assets/icon/app_icon.png',
-                  fit: BoxFit.contain,
+                const SizedBox(height: 20),
+
+                Center(
+                  child: Text(
+                    'Taskly',
+                    style: GoogleFonts.outfit(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-
-              // App name
-              Text(
-                'Taskly',
-                style: GoogleFonts.outfit(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
-                ),
-              ),
-              const SizedBox(height: 8),
-
-              Text(
-                'Welcome back, you\'ve been missed',
-                style: TextStyle(
-                  color: isDark
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondaryLight,
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 40),
-
-              MyTextField(
-                horizontalPadding: 20,
-                hint: 'Email',
-                obscureText: false,
-                controller: _emailController,
-                prefixIcon: Icons.email_outlined,
-              ),
-              const SizedBox(height: 10),
-
-              MyTextField(
-                horizontalPadding: 20,
-                hint: 'Password',
-                obscureText: true,
-                controller: _passwordController,
-                prefixIcon: Icons.lock_outlined,
-              ),
-              const SizedBox(height: 30),
-
-              MyButton(
-                text: 'Login',
-                onTap: () => login(context),
-              ),
-              const SizedBox(height: 20),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Not a member? ',
-                    style: TextStyle(
+                const SizedBox(height: 8),
+                Center(
+                  child: Text(
+                    'Welcome back, you\'ve been missed',
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
                       color: isDark
                           ? AppColors.textSecondaryDark
                           : AppColors.textSecondaryLight,
                     ),
                   ),
-                  GestureDetector(
-                    onTap: onTap,
-                    child: Text(
-                      'Register now',
-                      style: TextStyle(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
+                ),
+
+                const Spacer(flex: 2),
+
+                TextField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    prefixIcon: const Icon(
+                      Icons.email_outlined,
+                      color: AppColors.primary,
                     ),
                   ),
-                ],
-              ),
-            ],
+                ),
+                const SizedBox(height: 16),
+
+                TextField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    prefixIcon: const Icon(
+                      Icons.lock_outlined,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 28),
+
+                ElevatedButton(
+                  onPressed: () => login(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    'Login',
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Not a member? ',
+                      style: GoogleFonts.inter(
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondaryLight,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: onTap,
+                      child: Text(
+                        'Register now',
+                        style: GoogleFonts.inter(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const Spacer(flex: 1),
+              ],
+            ),
           ),
         ),
       ),

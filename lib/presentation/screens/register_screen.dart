@@ -66,7 +66,6 @@ class RegisterScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo
               Container(
                 width: 96,
                 height: 96,
@@ -82,7 +81,6 @@ class RegisterScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // App name
               Text(
                 'Taskly',
                 style: GoogleFonts.outfit(
@@ -131,10 +129,7 @@ class RegisterScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              MyButton(
-                text: 'Register',
-                onTap: () => register(context),
-              ),
+              MyButton(text: 'Register', onTap: () => register(context)),
               const SizedBox(height: 20),
 
               Row(

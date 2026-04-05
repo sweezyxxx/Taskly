@@ -5,6 +5,7 @@ import 'package:taskly/domain/repositories/task_repository.dart';
 import 'package:taskly/domain/usecases/task_usecases.dart';
 
 class MockTaskRepository extends Mock implements TaskRepository {}
+
 class FakeTaskEntity extends Fake implements TaskEntity {}
 
 void main() {
@@ -32,13 +33,12 @@ void main() {
   );
 
   test('should call createTask on the repository', () async {
-    // arrange
-    when(() => repository.createTask(any())).thenAnswer((_) async => Future.value());
-    
-    // act
+    when(
+      () => repository.createTask(any()),
+    ).thenAnswer((_) async => Future.value());
+
     await usecase(tTask);
-    
-    // assert
+
     verify(() => repository.createTask(tTask)).called(1);
     verifyNoMoreInteractions(repository);
   });

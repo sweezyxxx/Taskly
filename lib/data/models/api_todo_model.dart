@@ -21,11 +21,6 @@ class ApiTodoModel {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'userId': userId,
-      'title': title,
-      'completed': completed,
-    };
+    return {'id': id, 'userId': userId, 'title': title, 'completed': completed};
   }
 }

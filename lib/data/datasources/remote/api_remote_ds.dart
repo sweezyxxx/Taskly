@@ -20,7 +20,10 @@ class ApiRemoteDataSourceImpl implements ApiRemoteDataSource {
       final response = await dio.get('/todos');
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['todos'];
-        return data.map((json) => ApiTodoModel.fromJson(json)).take(10).toList();
+        return data
+            .map((json) => ApiTodoModel.fromJson(json))
+            .take(10)
+            .toList();
       } else {
         throw Exception('Server error: ${response.statusCode}');
       }

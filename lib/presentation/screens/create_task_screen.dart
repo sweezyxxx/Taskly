@@ -52,7 +52,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   void _submit(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      
+
       final bool isEditing = widget.taskToEdit != null;
       final task = TaskEntity(
         id: isEditing ? widget.taskToEdit!.id : const Uuid().v4(),
@@ -66,7 +66,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         isSynced: false,
       );
 
-      context.read<TaskDetailBloc>().add(SaveTaskEvent(task, isEditing: isEditing));
+      context.read<TaskDetailBloc>().add(
+        SaveTaskEvent(task, isEditing: isEditing),
+      );
     }
   }
 
@@ -79,14 +81,18 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           if (state is TaskDetailSuccess) {
             context.pop();
           } else if (state is TaskDetailError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
         builder: (context, state) {
           return Scaffold(
-            appBar: AppBar(title: Text(widget.taskToEdit != null ? 'Edit Task' : 'Create Task')),
+            appBar: AppBar(
+              title: Text(
+                widget.taskToEdit != null ? 'Edit Task' : 'Create Task',
+              ),
+            ),
             body: Form(
               key: _formKey,
               child: ListView(
@@ -95,7 +101,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                   TextFormField(
                     initialValue: _title,
                     decoration: const InputDecoration(labelText: 'Task Title'),
-                    validator: (v) => v!.trim().isEmpty ? 'Enter a title' : null,
+                    validator: (v) =>
+                        v!.trim().isEmpty ? 'Enter a title' : null,
                     onSaved: (v) => _title = v!.trim(),
                   ),
                   const SizedBox(height: 16),
@@ -106,17 +113,23 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                     onSaved: (v) => _description = v ?? '',
                   ),
                   const SizedBox(height: 24),
-                  
+
                   Text('Priority', style: GoogleFonts.outfit(fontSize: 16)),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
-                    children: TaskPriority.values.map((p) => ChoiceChip(
-                      label: Text(p.name.toUpperCase()),
-                      selected: _priority == p,
-                      selectedColor: AppColors.primary.withValues(alpha: 0.2),
-                      onSelected: (_) => setState(() => _priority = p),
-                    )).toList(),
+                    children: TaskPriority.values
+                        .map(
+                          (p) => ChoiceChip(
+                            label: Text(p.name.toUpperCase()),
+                            selected: _priority == p,
+                            selectedColor: AppColors.primary.withValues(
+                              alpha: 0.2,
+                            ),
+                            onSelected: (_) => setState(() => _priority = p),
+                          ),
+                        )
+                        .toList(),
                   ),
                   const SizedBox(height: 24),
 
@@ -127,9 +140,16 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                       borderRadius: BorderRadius.circular(12),
                       side: BorderSide(color: Colors.grey.shade300),
                     ),
-                    leading: const Icon(Icons.calendar_today, color: AppColors.primary),
-                    title: Text(_dueDate == null ? 'Set a deadline' : DateFormat('MMM d, yyyy').format(_dueDate!)),
-                    trailing: _dueDate != null 
+                    leading: const Icon(
+                      Icons.calendar_today,
+                      color: AppColors.primary,
+                    ),
+                    title: Text(
+                      _dueDate == null
+                          ? 'Set a deadline'
+                          : DateFormat('MMM d, yyyy').format(_dueDate!),
+                    ),
+                    trailing: _dueDate != null
                         ? IconButton(
                             icon: const Icon(Icons.clear),
                             onPressed: () => setState(() => _dueDate = null),
@@ -140,10 +160,16 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                   const SizedBox(height: 48),
 
                   ElevatedButton(
-                    onPressed: state is TaskDetailSaving ? null : () => _submit(context),
-                    child: state is TaskDetailSaving 
+                    onPressed: state is TaskDetailSaving
+                        ? null
+                        : () => _submit(context),
+                    child: state is TaskDetailSaving
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : Text(widget.taskToEdit != null ? 'Save Changes' : 'Create Task'),
+                        : Text(
+                            widget.taskToEdit != null
+                                ? 'Save Changes'
+                                : 'Create Task',
+                          ),
                   ),
                 ],
               ),
