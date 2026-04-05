@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:taskly/app/theme/app_colors.dart';
 
 class MyButton extends StatelessWidget {
   final void Function()? onTap;
   final String text;
+
   const MyButton({
     super.key,
     required this.text,
@@ -15,17 +17,20 @@ class MyButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondary,
-          borderRadius: BorderRadius.circular(12)
+          color: AppColors.primary,
+          borderRadius: BorderRadius.circular(12),
         ),
-        padding: EdgeInsets.all(20),
-        margin: EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.all(20),
+        margin: const EdgeInsets.symmetric(horizontal: 20),
         child: Center(
-          child: Text(text, style: TextStyle(
-            color: Theme.of(context).colorScheme.inversePrimary,
-            fontSize: 16,
-            fontWeight: FontWeight.bold
-          ),),
+          child: Text(
+            text,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
       ),
     );

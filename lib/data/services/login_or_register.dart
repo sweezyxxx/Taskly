@@ -1,5 +1,5 @@
-import 'package:taskly/presentation/screens/login_page.dart';
-import 'package:taskly/presentation/screens/register_page.dart';
+import 'package:taskly/presentation/screens/login_screen.dart';
+import 'package:taskly/presentation/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 
 class LoginOrRegister extends StatefulWidget {
@@ -22,9 +22,9 @@ class _LoginOrRegisterState extends State<LoginOrRegister> {
   @override
   Widget build(BuildContext context) {
      if (showLoginPage) {
-      return LoginPage(onTap: togglePages,);
+      return LoginScreen(onTap: togglePages,);
      } else {
-      return RegisterPage(onTap: togglePages,);
+      return RegisterScreen(onTap: togglePages,);
      }
   }
 }

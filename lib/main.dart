@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:taskly/data/services/auth_gate.dart';
 import 'package:taskly/firebase_options.dart';
 import 'app/di/injection.dart';
+import 'app/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +21,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
       home: AuthGate(),
     );
   }

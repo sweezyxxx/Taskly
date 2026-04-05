@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class PrefsLocalDataSource {
@@ -14,7 +15,12 @@ class PrefsLocalDataSourceImpl implements PrefsLocalDataSource {
 
   @override
   Future<bool> getThemeMode() async {
-    return prefs.getBool(_kThemeMode) ?? false;
+    if (prefs.containsKey(_kThemeMode)) {
+      return prefs.getBool(_kThemeMode)!;
+    }
+    // First launch: follow system theme
+    final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+    return brightness == Brightness.dark;
   }
 
   @override

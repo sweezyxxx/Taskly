@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taskly/app/theme/app_colors.dart';
 
 class MyTextField extends StatelessWidget {
   final TextEditingController controller;
@@ -6,6 +7,7 @@ class MyTextField extends StatelessWidget {
   final String hint;
   final double horizontalPadding;
   final FocusNode? focusNode;
+  final IconData? prefixIcon;
 
   const MyTextField({
     super.key,
@@ -14,30 +16,38 @@ class MyTextField extends StatelessWidget {
     required this.controller,
     required this.horizontalPadding,
     this.focusNode,
+    this.prefixIcon,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
       child: TextField(
+        controller: controller,
+        obscureText: obscureText,
+        focusNode: focusNode,
         decoration: InputDecoration(
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary)
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Theme.of(context).colorScheme.secondary)
-          ),
-          fillColor: Theme.of(context).colorScheme.primary,
-          filled: true,
           hintText: hint,
           hintStyle: TextStyle(
-            color: Theme.of(context).colorScheme.inversePrimary
-          )
+            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+          ),
+          prefixIcon: prefixIcon != null
+              ? Icon(prefixIcon, color: AppColors.primary)
+              : null,
+          filled: true,
+          fillColor: isDark ? AppColors.surfaceDark : AppColors.primary.withValues(alpha: 0.1),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          ),
         ),
-        obscureText: obscureText,
-        controller: controller,
-        focusNode: focusNode,
       ),
     );
   }
