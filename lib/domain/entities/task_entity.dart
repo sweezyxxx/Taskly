@@ -1,9 +1,7 @@
-// ignore: constant_identifier_names
 import 'package:equatable/equatable.dart';
 
 enum TaskStatus { todo, done }
 
-// ignore: constant_identifier_names
 enum TaskPriority { low, medium, high }
 
 class TaskEntity extends Equatable {
